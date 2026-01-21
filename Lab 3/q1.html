@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Registration - Adaptive System</title>
+    <style>
+        /* 1. Global Reset & Box Model Fix */
+        * {
+            box-sizing: border-box; 
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* 2. Color Variables - Creme and Dark Green Palette */
+        :root {
+            --creme-bg: #F9F8F3;    
+            --dark-green: #1B3022;  
+            --accent-green: #2D4F38; 
+            --card-white: #FFFFFF;  
+            --input-bg: #F1F1EB;    
+            --error-red: #C64747;   
+        }
+
+        /* 3. Centering the System */
+        body {
+            background-color: var(--creme-bg);
+            color: var(--dark-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .bento-container {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+        }
+
+        /* 4. The Bento Grid Layout */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; 
+            gap: 16px; 
+        }
+
+        .bento-card {
+            background: var(--card-white);
+            padding: 24px;
+            border-radius: 24px;
+            border: 1px solid rgba(27, 48, 34, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(27, 48, 34, 0.06);
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        /* 5. Form Elements */
+        label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            color: var(--accent-green);
+        }
+
+        input, select, textarea {
+            width: 100%; 
+            border: 1px solid transparent;
+            background: var(--input-bg);
+            padding: 14px;
+            border-radius: 14px;
+            color: var(--dark-green);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background: var(--card-white);
+            border: 1px solid var(--dark-green);
+            box-shadow: 0 0 0 4px rgba(27, 48, 34, 0.05);
+        }
+
+        /* 6. Feedback & Validation Styles */
+        .error {
+            color: var(--error-red);
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 8px;
+            min-height: 14px; 
+        }
+
+        input.invalid, textarea.invalid {
+            border: 1px solid var(--error-red);
+            background: #FFF5F5;
+        }
+
+        #roleHint {
+            display: block;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            opacity: 0.6;
+            line-height: 1.4;
+        }
+
+        /* 7. Submit Button */
+        .submit-btn {
+            background: var(--dark-green);
+            color: var(--creme-bg);
+            border: none;
+            padding: 20px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: var(--accent-green);
+            box-shadow: 0 10px 20px rgba(27, 48, 34, 0.2);
+        }
+
+        @media (max-width: 500px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .span-2 { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bento-container">
+        <header class="header">
+            <h1>Registration</h1>
+            <p>Adaptive Role-Based Validation System</p>
+        </header>
+
+        <form id="regForm" class="bento-grid" novalidate>
+            <div class="bento-card span-2">
+                <label>System Role</label>
+                <select id="role">
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Admin">Admin</option>
+                </select>
+                <small id="roleHint">Min age: 16 | Password: Min 6 chars</small>
+            </div>
+
+            <div class="bento-card">
+                <label>Full Name</label>
+                <input type="text" id="name" placeholder="Enter name">
+                <span class="error" id="nameError"></span>
+            </div>
+
+            <div class="bento-card">
+                <label>Age</label>
+                <input type="number" id="age" placeholder="Enter age">
+                <span class="error" id="ageError"></span>
+            </div>
+
+            <div class="bento-card span-2">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="email@domain.com">
+                <span class="error" id="emailError"></span>
+            </div>
+
+            <div id="skillsContainer" class="bento-card span-2">
+                <label>Skills</label>
+                <textarea id="skills" placeholder="List your expertise..."></textarea>
+                <span class="error" id="skillsError"></span>
+            </div>
+
+            <div id="adminContainer" class="bento-card span-2" style="display: none;">
+                <label>Admin Access Code</label>
+                <input type="text" id="adminCode" placeholder="Enter security code">
+                <span class="error" id="adminCodeError"></span>
+            </div>
+
+            <div class="bento-card">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="••••••••">
+                <span class="error" id="passwordError"></span>
+            </div>
+
+            <div class="bento-card">
+                <label>Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="••••••••">
+                <span class="error" id="confirmError"></span>
+            </div>
+
+            <button type="submit" class="submit-btn span-2">Register Account</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('regForm');
+        const roleSelect = document.getElementById('role');
+
+        // Requirement 2: Role-based dynamic rules
+        const roleRules = {
+            Student: { 
+                minAge: 16, 
+                pwRegex: /.{6,}/, 
+                msg: "Min 6 characters", 
+                domain: "" 
+            },
+            Teacher: { 
+                minAge: 21, 
+                pwRegex: /^(?=.*[0-9]).{8,}$/, 
+                msg: "Min 8 characters & 1 number", 
+                domain: "" 
+            },
+            Admin: { 
+                minAge: 18, 
+                pwRegex: /^(?=.*[A-Z])(?=.*[!@#$&*]).{10,}$/, 
+                msg: "Min 10 characters, 1 Uppercase & 1 Symbol", 
+                domain: "admin.com" 
+            }
+        };
+
+        // Requirement 4: Manage feedback dynamically
+        function updateFeedback(id, isValid, message) {
+            const input = document.getElementById(id);
+            const errorSpan = document.getElementById(id + 'Error');
+            
+            if (!isValid) {
+                input.classList.add('invalid');
+                errorSpan.innerText = message;
+            } else {
+                input.classList.remove('invalid');
+                errorSpan.innerText = "";
+            }
+        }
+
+        // Requirement 5: DOM Manipulation (Show/Hide)
+        roleSelect.addEventListener('change', () => {
+            const role = roleSelect.value;
+            const skillsBox = document.getElementById('skillsContainer');
+            const adminBox = document.getElementById('adminContainer');
+            const hint = document.getElementById('roleHint');
+
+            if (role === 'Admin') {
+                skillsBox.style.display = 'none';
+                adminBox.style.display = 'block';
+            } else {
+                skillsBox.style.display = 'block';
+                adminBox.style.display = 'none';
+            }
+
+            const r = roleRules[role];
+            hint.innerText = `Min age: ${r.minAge} | Password: ${r.msg} ${r.domain ? '| Must use @' + r.domain : ''}`;
+            validate(false); 
+        });
+
+        // Requirement 3: Email domain and Password strength validation
+        function validate(isSubmit = false) {
+            const currentRole = roleRules[roleSelect.value];
+            let errorCount = 0;
+
+            const name = document.getElementById('name');
+            const isNameValid = name.value.trim().length >= 2;
+            if (isSubmit || name.value !== "") updateFeedback('name', isNameValid, "Name required (min 2 chars)");
+            if (!isNameValid) errorCount++;
+
+            const email = document.getElementById('email');
+            const isEmailValid = currentRole.domain ? email.value.endsWith(`@${currentRole.domain}`) : email.value.includes('@');
+            if (isSubmit || email.value !== "") updateFeedback('email', isEmailValid, currentRole.domain ? `Requires @${currentRole.domain} domain` : "Valid email required");
+            if (!isEmailValid) errorCount++;
+
+            const age = document.getElementById('age');
+            const isAgeValid = parseInt(age.value) >= currentRole.minAge;
+            if (isSubmit || age.value !== "") updateFeedback('age', isAgeValid, `Must be at least ${currentRole.minAge}`);
+            if (!isAgeValid) errorCount++;
+
+            const pw = document.getElementById('password');
+            const isPwValid = currentRole.pwRegex.test(pw.value);
+            if (isSubmit || pw.value !== "") updateFeedback('password', isPwValid, currentRole.msg);
+            if (!isPwValid) errorCount++;
+
+            const cpw = document.getElementById('confirmPassword');
+            const isMatch = cpw.value === pw.value && cpw.value !== "";
+            if (isSubmit || cpw.value !== "") updateFeedback('confirmPassword', isMatch, "Passwords do not match");
+            if (!isMatch) errorCount++;
+
+            if (roleSelect.value === 'Admin') {
+                const acode = document.getElementById('adminCode');
+                const isCodeValid = acode.value.trim() !== "";
+                if (isSubmit || acode.value !== "") updateFeedback('adminCode', isCodeValid, "Admin code required");
+                if (!isCodeValid) errorCount++;
+            }
+
+            return errorCount === 0;
+        }
+
+        // Requirement 6: Prevent submission until valid
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const isValid = validate(true);
+
+            if (isValid) {
+                alert("Account successfully registered!");
+                form.reset();
+                document.getElementById('skillsContainer').style.display = 'block';
+                document.getElementById('adminContainer').style.display = 'none';
+            } else {
+                alert("Please correct the highlighted errors before submitting.");
+            }
+        });
+
+        // Real-time highlighting (Requirement 5)
+        form.addEventListener('input', () => validate(false));
+    </script>
+</body>
+</html>

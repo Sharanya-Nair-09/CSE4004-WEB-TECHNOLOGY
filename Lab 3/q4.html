@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Monitor - Final Audit</title>
+    <style>
+        :root {
+            --mint-bg: #F2F8F5;
+            --forest-deep: #1B3022;
+            --leaf-green: #395743;
+            --sage-accent: #A3C9A8;
+            --card-white: #FFFFFF;
+            --warning: #E67E22;
+            --text-dark: #1A1C1A;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--mint-bg);
+            color: var(--text-dark);
+            display: flex; justify-content: center;
+            padding: 40px 20px; min-height: 100vh;
+        }
+
+        .bento-container { width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .header { grid-column: span 2; text-align: center; }
+        .header h1 { color: var(--forest-deep); font-size: 2.2rem; }
+
+        .bento-card {
+            background: var(--card-white); padding: 25px; border-radius: 28px;
+            border: 1px solid rgba(57, 87, 67, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        h3 { color: var(--leaf-green); margin-bottom: 15px; font-size: 1.1rem; }
+
+        /* Interaction Zone */
+        .input-box {
+            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #EEE;
+            background: #F9FBFA; outline: none; margin-bottom: 15px;
+        }
+
+        .btn-zone {
+            height: 100px; background: var(--sage-accent); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--forest-deep); font-weight: bold; cursor: pointer;
+        }
+
+        /* Log Panel */
+        #log-window {
+            height: 350px; overflow-y: auto; font-size: 0.8rem;
+            display: flex; flex-direction: column; gap: 8px; padding-right: 5px;
+        }
+
+        .log-item {
+            padding: 10px; border-radius: 10px; background: #f0f4f1;
+            border-left: 4px solid var(--leaf-green);
+        }
+
+        .alert { 
+            background: #FFF4ED; border-left-color: var(--warning); 
+            color: var(--warning); font-weight: 800; animation: flash 0.5s infinite alternate;
+        }
+
+        .controls { grid-column: span 2; display: flex; gap: 10px; }
+        .btn-action {
+            flex: 1; padding: 18px; border-radius: 15px; border: none;
+            cursor: pointer; font-weight: 800; transition: 0.3s;
+        }
+        .btn-reset { background: #E0EAE3; color: var(--leaf-green); }
+        .btn-export { background: var(--forest-deep); color: white; }
+
+        @keyframes flash { from { opacity: 1; } to { opacity: 0.6; } }
+    </style>
+</head>
+<body>
+
+    <div class="bento-container" id="app-root">
+        <header class="header">
+            <h1>🌲 Sentinel Activity Tracker</h1>
+            <p>Real-time DOM Event Propagation Monitor</p>
+        </header>
+
+        <div class="bento-card" id="interaction-card">
+            <h3>🎮 Capture & Bubble Zone</h3>
+            <p style="font-size: 0.8rem; margin-bottom: 10px; opacity: 0.7;">Clicking the button triggers events in both phases.</p>
+            <input type="text" id="userInput" class="input-box" placeholder="Focus/Type here...">
+            <div id="targetBtn" class="btn-zone">CLICK ME</div>
+        </div>
+
+        <div class="bento-card">
+            <h3>📜 Live Activity Log</h3>
+            <div id="log-window"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-action btn-reset" onclick="clearLogs()">Reset System</button>
+            <button class="btn-action btn-export" onclick="exportData()">Export Formatted Log</button>
+        </div>
+    </div>
+
+    <script>
+        // 2. Storage Array (Requirement 2)
+        let activityLog = [];
+        let clickThreshold = 0;
+        const logWindow = document.getElementById('log-window');
+        const appRoot = document.getElementById('app-root');
+
+        // 1 & 3. Track Clicks, Keys, Focus with Bubbling AND Capturing (Requirement 1 & 3)
+        
+
+        // --- CAPTURING PHASE (Third argument = true) ---
+        window.addEventListener('click', (e) => record('Click', e.target.id || e.target.tagName, 'Capture'), true);
+        window.addEventListener('keydown', (e) => record('KeyPress', e.key, 'Capture'), true);
+        window.addEventListener('focus', (e) => record('Focus', e.target.id || e.target.tagName, 'Capture'), true);
+
+        // --- BUBBLING PHASE (Third argument = false) ---
+        window.addEventListener('click', (e) => record('Click', e.target.id || e.target.tagName, 'Bubble'), false);
+        window.addEventListener('keydown', (e) => record('KeyPress', e.key, 'Bubble'), false);
+        window.addEventListener('blur', (e) => record('Blur', e.target.id || e.target.tagName, 'Bubble'), false);
+
+        // 4. Dynamic Logic & Storage
+        function record(type, detail, phase) {
+            const entry = {
+                time: new Date().toLocaleTimeString(),
+                type,
+                detail,
+                phase
+            };
+            
+            activityLog.push(entry);
+
+            // 5. Suspicious Activity Threshold (Requirement 5)
+            if (type === 'Click' && phase === 'Bubble') {
+                clickThreshold++;
+                if (clickThreshold > 10) {
+                    displayLog(`🚨 SUSPICIOUS: Rapid Clicking Detected!`, true);
+                }
+            }
+
+            displayLog(`[${entry.time}] ${type} on ${detail} (${phase})`);
+        }
+
+        // 4. DOM Manipulation (Requirement 4)
+        function displayLog(msg, isAlert = false) {
+            const div = document.createElement('div');
+            div.className = `log-item ${isAlert ? 'alert' : ''}`;
+            div.innerText = msg;
+            logWindow.prepend(div);
+        }
+
+        // 6. Reset & Export (Requirement 6)
+        function clearLogs() {
+            activityLog = [];
+            clickThreshold = 0;
+            logWindow.innerHTML = '';
+            alert("Logs cleared successfully.");
+        }
+
+        function exportData() {
+            if (activityLog.length === 0) return alert("Log is empty!");
+
+            const header = "SENTINEL ACTIVITY REPORT\n========================\n\n";
+            const body = activityLog.map(a => 
+                `${a.time} | Phase: ${a.phase.padEnd(8)} | Event: ${a.type.padEnd(8)} | Target: ${a.detail}`
+            ).join('\n');
+
+            const blob = new Blob([header + body], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `activity_report_${Date.now()}.txt`;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

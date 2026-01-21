@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Survey Builder</title>
+    <style>
+        :root {
+            --creme: #FDFCF8;
+            --pastel-blue: #A9D1E1;
+            --deep-blue: #5D9CB3;
+            --card-white: #FFFFFF;
+            --text: #2C3E50;
+            --error: #E57373;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--creme);
+            color: var(--text);
+            display: flex; justify-content: center;
+            padding: 40px 20px; min-height: 100vh;
+        }
+
+        .bento-container { width: 100%; max-width: 800px; }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: var(--deep-blue); font-size: 2.2rem; margin-bottom: 10px; }
+
+        /* Bento Grid */
+        #surveyForm {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+        }
+
+        .q-card {
+            background: var(--card-white); padding: 25px; border-radius: 28px;
+            border: 1px solid rgba(169, 209, 225, 0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+        }
+
+        .full-width { grid-column: span 2; }
+
+        .q-label { font-weight: 700; margin-bottom: 15px; display: block; color: var(--deep-blue); }
+
+        /* Inputs */
+        input[type="text"] {
+            width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #EEE;
+            background: #F9FBFC; outline: none; font-size: 1rem;
+        }
+
+        input[type="text"]:focus { border-color: var(--pastel-blue); background: white; }
+
+        .options-group { display: flex; flex-direction: column; gap: 10px; }
+        .opt-label { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 0.95rem; }
+
+        /* Validation UI */
+        .error-msg { 
+            color: var(--error); font-size: 0.8rem; margin-top: 10px; 
+            font-weight: 600; display: none; 
+        }
+        
+        .char-counter { 
+            font-size: 0.75rem; color: #999; text-align: right; display: block; margin-top: 5px; 
+        }
+
+        .submit-btn {
+            grid-column: span 2; background: var(--pastel-blue); color: white;
+            border: none; padding: 20px; border-radius: 20px; font-weight: 800;
+            font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+        }
+
+        .submit-btn:hover { background: var(--deep-blue); transform: translateY(-2px); }
+
+        @media (max-width: 650px) {
+            #surveyForm { grid-template-columns: 1fr; }
+            .full-width, .submit-btn { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bento-container">
+        <header class="header">
+            <h1>❄️ BlueSurvey</h1>
+            <p>Dynamic DOM-Generated Form Builder</p>
+        </header>
+
+        <form id="surveyForm" novalidate></form>
+    </div>
+
+    <script>
+        // 1. Structure to store questions (Requirement 1)
+        const surveyData = [
+            { id: "userName", type: "text", label: "Full Name", required: true, limit: 30, full: false },
+            { id: "contact", type: "radio", label: "Best time to contact?", required: true, options: ["Morning", "Afternoon", "Evening"], full: false },
+            { id: "interests", type: "checkbox", label: "Interests (Pick at least 2)", required: true, options: ["Design", "Coding", "Marketing", "Management"], min: 2, full: true },
+            { id: "feedback", type: "text", label: "Why did you join? (Character limit: 100)", required: true, limit: 100, full: true }
+        ];
+
+        const form = document.getElementById('surveyForm');
+
+        // 2. Dynamically generate form fields (Requirement 2)
+        function buildForm() {
+            surveyData.forEach(q => {
+                const card = document.createElement('div');
+                card.className = `q-card ${q.full ? 'full-width' : ''}`;
+                
+                const label = document.createElement('label');
+                label.className = 'q-label';
+                label.innerText = q.label;
+                card.appendChild(label);
+
+                if (q.type === 'text') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = q.id;
+                    input.placeholder = "Type here...";
+                    card.appendChild(input);
+
+                    // Character counter logic
+                    const counter = document.createElement('span');
+                    counter.className = 'char-counter';
+                    counter.innerText = `0 / ${q.limit}`;
+                    card.appendChild(counter);
+
+                    input.addEventListener('input', () => {
+                        counter.innerText = `${input.value.length} / ${q.limit}`;
+                        if (input.value.length > q.limit) counter.style.color = 'red';
+                        else counter.style.color = '#999';
+                    });
+                } 
+                
+                else if (q.type === 'radio' || q.type === 'checkbox') {
+                    const group = document.createElement('div');
+                    group.className = 'options-group';
+                    q.options.forEach(opt => {
+                        const lbl = document.createElement('label');
+                        lbl.className = 'opt-label';
+                        const inp = document.createElement('input');
+                        inp.type = q.type;
+                        inp.name = q.id;
+                        inp.value = opt;
+                        lbl.appendChild(inp);
+                        lbl.appendChild(document.createTextNode(opt));
+                        group.appendChild(lbl);
+                    });
+                    card.appendChild(group);
+                }
+
+                const err = document.createElement('div');
+                err.className = 'error-msg';
+                err.id = `err-${q.id}`;
+                card.appendChild(err);
+
+                form.appendChild(card);
+            });
+
+            const btn = document.createElement('button');
+            btn.type = 'submit';
+            btn.className = 'submit-btn';
+            btn.innerText = 'Complete Survey';
+            form.appendChild(btn);
+        }
+
+        // 3, 4 & 5. Validation and DOM Manipulation (Inline Messages)
+        
+        function validate() {
+            let pass = true;
+
+            surveyData.forEach(q => {
+                const errBox = document.getElementById(`err-${q.id}`);
+                let valid = true;
+                let msg = "";
+
+                if (q.type === 'text') {
+                    const val = document.getElementById(q.id).value.trim();
+                    if (q.required && val === "") {
+                        valid = false; msg = "Field is required.";
+                    } else if (q.limit && val.length > q.limit) {
+                        valid = false; msg = `Maximum ${q.limit} characters allowed.`;
+                    }
+                } 
+                else if (q.type === 'radio') {
+                    const selected = document.querySelector(`input[name="${q.id}"]:checked`);
+                    if (q.required && !selected) {
+                        valid = false; msg = "Please pick one option.";
+                    }
+                } 
+                else if (q.type === 'checkbox') {
+                    const count = document.querySelectorAll(`input[name="${q.id}"]:checked`).length;
+                    if (q.required && count < (q.min || 1)) {
+                        valid = false; msg = `Please select at least ${q.min || 1} options.`;
+                    }
+                }
+
+                // Show/Hide Inline Validation Messages (Requirement 5)
+                if (!valid) {
+                    errBox.innerText = msg;
+                    errBox.style.display = 'block';
+                    pass = false;
+                } else {
+                    errBox.style.display = 'none';
+                }
+            });
+            return pass;
+        }
+
+        // 6. Prevent form submission (Requirement 6)
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (validate()) {
+                alert("Survey Builder: Validation Successful. Form Submitted!");
+            } else {
+                console.log("Form has errors.");
+            }
+        });
+
+        // Initialize
+        buildForm();
+    </script>
+</body>
+</html>

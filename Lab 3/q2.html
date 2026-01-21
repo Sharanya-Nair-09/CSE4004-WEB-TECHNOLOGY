@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Shopping Cart - Verified Edition</title>
+    <style>
+        :root {
+            --creme-bg: #FCF9F3;
+            --primary-orange: #FF7043;
+            --deep-orange: #E64A19;
+            --card-white: #FFFFFF;
+            --input-bg: #F7F3EE;
+            --text-main: #3E2723;
+            --error-red: #D32F2F;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--creme-bg);
+            color: var(--text-main);
+            display: flex; justify-content: center;
+            padding: 40px 20px; min-height: 100vh;
+        }
+
+        .bento-container {
+            width: 100%; max-width: 1000px;
+            display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px;
+        }
+
+        .header { grid-column: span 2; text-align: center; margin-bottom: 10px; }
+        .header h1 { color: var(--primary-orange); font-size: 2.5rem; }
+
+        .bento-card {
+            background: var(--card-white); padding: 30px;
+            border-radius: 32px; border: 1px solid rgba(255, 112, 67, 0.1);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        }
+
+        .item-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px; margin-bottom: 12px;
+            background: var(--input-bg); border-radius: 20px;
+        }
+
+        .qty-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-btn {
+            width: 30px; height: 30px; border-radius: 50%; border: none;
+            background: white; cursor: pointer; font-weight: bold;
+        }
+
+        .btn {
+            padding: 12px 20px; border-radius: 14px; border: none;
+            cursor: pointer; font-weight: 700; transition: 0.2s;
+        }
+
+        .btn-orange { background: var(--primary-orange); color: white; }
+        .btn-orange:hover { background: var(--deep-orange); }
+
+        .summary-line { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .total { font-size: 1.8rem; font-weight: 800; color: var(--primary-orange); border-top: 2px dashed #DDD; padding-top: 15px; }
+        
+        input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #DDD; background: var(--input-bg); margin: 10px 0; }
+        .badge { background: #FFCCBC; color: var(--deep-orange); padding: 4px 8px; border-radius: 8px; font-size: 0.7rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="bento-container">
+        <header class="header">
+            <h1>🧡 Smart Cart</h1>
+            <p>Advanced Discount Logic System</p>
+        </header>
+
+        <div class="bento-card">
+            <h3>🛍️ Available Products</h3>
+            <div id="productList"></div>
+        </div>
+
+        <div class="bento-card">
+            <h3>🧾 Your Cart</h3>
+            <div id="cartList"></div>
+
+            <div style="margin-top: 20px;">
+                <label>🏷️ Coupon Code (Use SAVE100)</label>
+                <input type="text" id="couponInput" placeholder="Enter coupon...">
+                <button class="btn btn-orange" style="width: 100%" onclick="applyCoupon()">Apply Coupon</button>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div class="summary-line"><span>Subtotal</span><span id="subTotal">₹0</span></div>
+                <div class="summary-line" style="color: var(--error-red)"><span>Discounts</span><span id="discTotal">-₹0</span></div>
+                <div class="summary-line total"><span>Total</span><span id="finalTotal">₹0</span></div>
+            </div>
+            <p id="timeMsg" style="font-size: 0.75rem; text-align: center; margin-top: 10px; opacity: 0.6;"></p>
+        </div>
+    </div>
+
+    <script>
+        // 1. Array of products (Requirement 1)
+        const products = [
+            { id: 1, name: "Premium Coffee", price: 500, category: "Beverage", quantity: 0 },
+            { id: 2, name: "Dark Chocolate", price: 300, category: "Food", quantity: 0 },
+            { id: 3, name: "Assam Tea", price: 200, category: "Beverage", quantity: 0 }
+        ];
+
+        let cart = [];
+        let couponDiscount = 0;
+
+        function render() {
+            // Render Products
+            document.getElementById('productList').innerHTML = products.map(p => `
+                <div class="item-row">
+                    <div><b>${p.name}</b><br><small>₹${p.price} | ${p.category}</small></div>
+                    <button class="btn btn-orange" onclick="addToCart(${p.id})">Add to Cart</button>
+                </div>
+            `).join('');
+
+            // Render Cart (Requirement 2 & 6: Dynamic updating & Real-time display)
+            const cartList = document.getElementById('cartList');
+            if(cart.length === 0) cartList.innerHTML = "<p>Empty cart</p>";
+            else {
+                cartList.innerHTML = cart.map(item => `
+                    <div class="item-row">
+                        <div><b>${item.name}</b></div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="updateQty(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="qty-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            calculate();
+        }
+
+        // Add/Remove/Update (Requirement 2)
+        function addToCart(id) {
+            const item = cart.find(i => i.id === id);
+            if(item) item.quantity++;
+            else cart.push({...products.find(p => p.id === id), quantity: 1});
+            render();
+        }
+
+        function updateQty(id, change) {
+            const item = cart.find(i => i.id === id);
+            item.quantity += change;
+            if(item.quantity <= 0) cart = cart.filter(i => i.id !== id);
+            render();
+        }
+
+        // Coupon Logic (Requirement 4: String methods)
+        function applyCoupon() {
+            const code = document.getElementById('couponInput').value.trim().toUpperCase();
+            if(code.startsWith("SAVE") && code.length > 4) {
+                couponDiscount = parseInt(code.substring(4)) || 0;
+                alert(`Applied ₹${couponDiscount} discount!`);
+            } else {
+                alert("Invalid code format.");
+                couponDiscount = 0;
+            }
+            render();
+        }
+
+        // Discount Engine (Requirement 3 & 5: Multiple rules & dynamic prices)
+        
+        function calculate() {
+            let subtotal = 0;
+            let discounts = 0;
+            const hour = new Date().getHours();
+
+            cart.forEach(item => {
+                let linePrice = item.price * item.quantity;
+                subtotal += linePrice;
+
+                // Rule 1: Bulk Discount (10% off if qty > 3)
+                if(item.quantity >= 3) discounts += linePrice * 0.10;
+
+                // Rule 2: Category Discount (₹50 off Beverages)
+                if(item.category === "Beverage") discounts += 50 * item.quantity;
+            });
+
+            // Rule 3: Time-of-day Discount (Happy Hour 4PM-6PM: 15% off)
+            if(hour >= 16 && hour <= 18) {
+                discounts += (subtotal - discounts) * 0.15;
+                document.getElementById('timeMsg').innerText = "✨ Happy Hour Active: Extra 15% off!";
+            } else {
+                document.getElementById('timeMsg').innerText = "Happy Hour starts at 4:00 PM";
+            }
+
+            discounts += couponDiscount;
+
+            document.getElementById('subTotal').innerText = `₹${subtotal}`;
+            document.getElementById('discTotal').innerText = `-₹${Math.round(discounts)}`;
+            document.getElementById('finalTotal').innerText = `₹${Math.max(0, Math.round(subtotal - discounts))}`;
+        }
+
+        render();
+    </script>
+</body>
+</html>
