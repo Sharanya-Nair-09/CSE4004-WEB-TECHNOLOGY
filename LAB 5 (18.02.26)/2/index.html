@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Library Book Tracker</title>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f7f6f3;
+            margin: 0;
+            padding: 40px;
+            color: #37352f;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 35px 45px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(15, 15, 15, 0.08);
+        }
+
+        h2 {
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            padding: 8px 10px;
+            margin: 6px 6px 6px 0;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: #fafafa;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #9b9a97;
+            background: #fff;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            background: #37352f;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s ease;
+        }
+
+        button:hover {
+            background: #2a2926;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            font-weight: 500;
+            padding: 12px 8px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #6b6b6b;
+        }
+
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-available {
+            color: #0f7b0f;
+            font-weight: 500;
+        }
+
+        .status-not {
+            color: #b42318;
+            font-weight: 500;
+        }
+
+        #message {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>📚 Library Book Tracker</h2>
+
+    <div class="form-section">
+        <input type="text" id="bookId" placeholder="Book ID">
+        <input type="text" id="title" placeholder="Title">
+        <input type="text" id="author" placeholder="Author">
+        <select id="availability">
+            <option value="Available">Available</option>
+            <option value="Not Available">Not Available</option>
+        </select>
+        <button onclick="addBook()">Add Book</button>
+    </div>
+
+    <p id="message"></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="bookTable"></tbody>
+    </table>
+
+</div>
+
+<script>
+
+let xmlDoc = null;
+
+window.onload = loadBooks;
+
+function loadBooks() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "books.xml", true);
+
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            xmlDoc = xhr.responseXML;
+
+            if (!xmlDoc) {
+                showMessage("Malformed XML file.", "red");
+                return;
+            }
+
+            displayBooks();
+        } else {
+            showMessage("Error loading XML file.", "red");
+        }
+    };
+
+    xhr.onerror = function () {
+        showMessage("Network error while loading XML.", "red");
+    };
+
+    xhr.send();
+}
+
+function displayBooks() {
+    const table = document.getElementById("bookTable");
+    table.innerHTML = "";
+
+    const books = xmlDoc.getElementsByTagName("book");
+
+    if (books.length === 0) {
+        showMessage("No books found in library.", "orange");
+        return;
+    }
+
+    for (let i = 0; i < books.length; i++) {
+
+        const id = books[i].getElementsByTagName("id")[0].textContent;
+        const title = books[i].getElementsByTagName("title")[0].textContent;
+        const author = books[i].getElementsByTagName("author")[0].textContent;
+        const availability = books[i].getElementsByTagName("availability")[0].textContent;
+
+        const statusClass = availability === "Available"
+            ? "status-available"
+            : "status-not";
+
+        table.innerHTML += `
+            <tr>
+                <td>${id}</td>
+                <td>${title}</td>
+                <td>${author}</td>
+                <td class="${statusClass}">${availability}</td>
+                <td>
+                    <button onclick="toggleStatus('${id}')">Toggle</button>
+                    <button onclick="deleteBook('${id}')">Delete</button>
+                </td>
+            </tr>
+        `;
+    }
+
+    showMessage("Library data loaded successfully.", "green");
+}
+
+function addBook() {
+
+    const id = bookId.value.trim();
+    const titleVal = title.value.trim();
+    const authorVal = author.value.trim();
+    const avail = availability.value;
+
+    if (!id || !titleVal || !authorVal) {
+        showMessage("All fields are required.", "red");
+        return;
+    }
+
+    const books = xmlDoc.getElementsByTagName("book");
+
+    for (let book of books) {
+        if (book.getElementsByTagName("id")[0].textContent === id) {
+            showMessage("Book ID already exists.", "red");
+            return;
+        }
+    }
+
+    const newBook = xmlDoc.createElement("book");
+    newBook.appendChild(createNode("id", id));
+    newBook.appendChild(createNode("title", titleVal));
+    newBook.appendChild(createNode("author", authorVal));
+    newBook.appendChild(createNode("availability", avail));
+
+    xmlDoc.getElementsByTagName("library")[0].appendChild(newBook);
+
+    displayBooks();
+    showMessage("Book added successfully.", "green");
+
+    bookId.value = "";
+    title.value = "";
+    author.value = "";
+}
+
+function toggleStatus(id) {
+
+    const books = xmlDoc.getElementsByTagName("book");
+
+    for (let book of books) {
+        if (book.getElementsByTagName("id")[0].textContent === id) {
+
+            const statusNode = book.getElementsByTagName("availability")[0];
+
+            statusNode.textContent =
+                statusNode.textContent === "Available"
+                ? "Not Available"
+                : "Available";
+
+            displayBooks();
+            showMessage("Availability updated.", "green");
+            return;
+        }
+    }
+}
+
+function deleteBook(id) {
+
+    const books = xmlDoc.getElementsByTagName("book");
+
+    for (let book of books) {
+        if (book.getElementsByTagName("id")[0].textContent === id) {
+            book.parentNode.removeChild(book);
+            displayBooks();
+            showMessage("Book deleted successfully.", "green");
+            return;
+        }
+    }
+}
+
+function createNode(tag, value) {
+    const node = xmlDoc.createElement(tag);
+    node.appendChild(xmlDoc.createTextNode(value));
+    return node;
+}
+
+function showMessage(msg, color) {
+    const message = document.getElementById("message");
+    message.style.color = color;
+    message.textContent = msg;
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product Inventory System</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f6f1e7; /* creme */
+            color: #2f3e2f;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border: 2px solid #a3b18a; /* sage */
+        }
+
+        h2 {
+            text-align: center;
+            color: #3a5a40;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            text-align: center;
+        }
+
+        input {
+            padding: 10px;
+            margin: 8px;
+            border-radius: 8px;
+            border: 1px solid #a3b18a;
+            background: #fefcf8;
+            width: 180px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #588157;
+            box-shadow: 0 0 5px rgba(88,129,87,0.5);
+        }
+
+        button {
+            padding: 10px 18px;
+            margin: 8px 5px;
+            border-radius: 8px;
+            border: none;
+            background-color: #588157; /* sage */
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #3a5a40;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+        }
+
+        th {
+            background-color: #a3b18a;
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f0ead2;
+        }
+
+        .low-stock {
+            background-color: #ffdddd !important;
+            color: #8b0000;
+            font-weight: bold;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #588157;
+        }
+
+        .total-value {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: right;
+            font-size: 16px;
+            color: #3a5a40;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Product Inventory System</h2>
+
+    <div class="form-section">
+        <input type="text" id="id" placeholder="Product ID">
+        <input type="text" id="name" placeholder="Name">
+        <input type="text" id="category" placeholder="Category">
+        <input type="number" id="price" placeholder="Price">
+        <input type="number" id="stock" placeholder="Stock Quantity">
+        <br>
+        <button onclick="addProduct()">Add</button>
+        <button onclick="updateProduct()">Update</button>
+        <button onclick="deleteProduct()">Delete</button>
+        <br>
+        <input type="text" id="searchCategory" placeholder="Search by Category">
+        <button onclick="searchCategory()">Search</button>
+        <button onclick="displayProducts()">Reset</button>
+    </div>
+
+    <p id="message"></p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price ($)</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody id="productTable"></tbody>
+    </table>
+
+    <div class="total-value" id="totalValue"></div>
+</div>
+
+<script>
+let products = [];
+
+function loadProducts() {
+    fetch("inventory.json")
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to load JSON");
+            return response.json();
+        })
+        .then(data => {
+            products = data;
+            displayProducts();
+        })
+        .catch(error => {
+            message.innerText = "Error: " + error.message;
+        });
+}
+
+function displayProducts(filtered = null) {
+    let table = document.getElementById("productTable");
+    table.innerHTML = "";
+    let data = filtered || products;
+
+    let total = 0;
+
+    data.forEach(product => {
+        total += product.price * product.stock;
+
+        let rowClass = product.stock < 10 ? "low-stock" : "";
+
+        table.innerHTML += `
+            <tr class="${rowClass}">
+                <td>${product.id}</td>
+                <td>${product.name}</td>
+                <td>${product.category}</td>
+                <td>${product.price}</td>
+                <td>${product.stock}</td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("totalValue").innerText =
+        "Total Inventory Value: $" + total;
+}
+
+function validate(id, name, category, price, stock) {
+    if (!id || !name || !category || !price || !stock) {
+        message.innerText = "All fields are required!";
+        return false;
+    }
+
+    if (price < 0 || stock < 0) {
+        message.innerText = "Price and stock must be positive!";
+        return false;
+    }
+
+    return true;
+}
+
+function addProduct() {
+    let id = idField.value.trim();
+    let name = nameField.value.trim();
+    let category = categoryField.value.trim();
+    let price = Number(priceField.value);
+    let stock = Number(stockField.value);
+
+    if (!validate(id, name, category, price, stock)) return;
+
+    if (products.find(p => p.id === id)) {
+        message.innerText = "Product ID already exists!";
+        return;
+    }
+
+    products.push({ id, name, category, price, stock });
+    displayProducts();
+    message.innerText = "Product added successfully!";
+}
+
+function updateProduct() {
+    let id = idField.value.trim();
+    let price = Number(priceField.value);
+    let stock = Number(stockField.value);
+
+    let product = products.find(p => p.id === id);
+    if (!product) {
+        message.innerText = "Product not found!";
+        return;
+    }
+
+    if (!isNaN(price)) product.price = price;
+    if (!isNaN(stock)) product.stock = stock;
+
+    displayProducts();
+    message.innerText = "Product updated successfully!";
+}
+
+function deleteProduct() {
+    let id = idField.value.trim();
+    let index = products.findIndex(p => p.id === id);
+
+    if (index === -1) {
+        message.innerText = "Product not found!";
+        return;
+    }
+
+    products.splice(index, 1);
+    displayProducts();
+    message.innerText = "Product deleted successfully!";
+}
+
+function searchCategory() {
+    let category = document.getElementById("searchCategory").value.trim().toLowerCase();
+    let filtered = products.filter(p =>
+        p.category.toLowerCase() === category
+    );
+
+    if (filtered.length === 0) {
+        message.innerText = "No products found in this category.";
+    } else {
+        message.innerText = "";
+    }
+
+    displayProducts(filtered);
+}
+
+const idField = document.getElementById("id");
+const nameField = document.getElementById("name");
+const categoryField = document.getElementById("category");
+const priceField = document.getElementById("price");
+const stockField = document.getElementById("stock");
+const message = document.getElementById("message");
+
+window.onload = loadProducts;
+</script>
+
+</body>
+</html>
