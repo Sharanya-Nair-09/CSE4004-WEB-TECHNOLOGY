@@ -1,0 +1,8 @@
+[
+    { name: "Indigo Denim Jacket", price: "$89.00", category: "Apparel" },
+    { name: "Slate Grey Backpack", price: "$55.00", category: "Accessories" },
+    { name: "Minimalist Desk Lamp", price: "$42.00", category: "Home Office" },
+    { name: "Wireless Bluetooth Speaker", price: "$120.00", category: "Electronics" },
+    { name: "Organic Cotton T-Shirt", price: "$28.00", category: "Apparel" },
+    { name: "Leather Tech Pouch", price: "$35.00", category: "Accessories" }
+]

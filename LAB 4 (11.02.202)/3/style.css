@@ -1,0 +1,87 @@
+:root {
+    --primary: #5c6ac4;
+    --success: #2e7d32;
+    --error: #d32f2f;
+    --bg: #f4f6f8;
+    --border: #dfe3e8;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--bg);
+    margin: 0;
+    padding: 20px;
+}
+
+.app-container {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 30px;
+}
+
+/* Form Sidebar */
+.form-section {
+    flex: 1;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    height: fit-content;
+}
+
+.input-group { margin-bottom: 15px; }
+label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.hidden { display: none; }
+#cancelBtn { background: #637381; }
+
+/* Table Section */
+.table-section {
+    flex: 2;
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#refreshBtn { width: auto; padding: 8px 15px; background: #ebeef0; color: #212b36; border: 1px solid var(--border); }
+
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: #f9fafb; font-size: 0.85rem; text-transform: uppercase; color: #637381; }
+
+.action-btn { width: auto; padding: 5px 10px; font-size: 0.75rem; margin-right: 5px; }
+.delete { background: var(--error); }
+.edit { background: var(--primary); }
+
+#statusMessage { margin-top: 15px; font-size: 0.85rem; text-align: center; }
+.msg-success { color: var(--success); }
+.msg-error { color: var(--error); }
+____________________________________

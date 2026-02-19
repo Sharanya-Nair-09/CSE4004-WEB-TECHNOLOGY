@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System | CRUD AJAX</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- 1. Sidebar: Student Form -->
+        <aside class="form-section">
+            <h2>Student Details</h2>
+            <form id="studentForm">
+                <input type="hidden" id="editMode" value="false">
+                
+                <div class="input-group">
+                    <label>Student ID</label>
+                    <input type="text" id="studentId" required placeholder="e.g. S101">
+                </div>
+
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="studentName" required placeholder="e.g. John Doe">
+                </div>
+
+                <div class="input-group">
+                    <label>Department</label>
+                    <select id="department">
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Business">Business</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Marks (%)</label>
+                    <input type="number" id="marks" required min="0" max="100">
+                </div>
+
+                <button type="submit" id="submitBtn">Add Student</button>
+                <button type="button" id="cancelBtn" class="hidden">Cancel Edit</button>
+            </form>
+            <div id="statusMessage"></div>
+        </aside>
+
+        <!-- 2. Main: Student Table -->
+        <main class="table-section">
+            <div class="table-header">
+                <h2>Registered Students</h2>
+                <button id="refreshBtn">Refresh Data</button>
+            </div>
+            
+            <table id="studentTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Dept.</th>
+                        <th>Marks</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data will be injected here via AJAX -->
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

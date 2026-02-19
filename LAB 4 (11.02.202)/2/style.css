@@ -1,0 +1,118 @@
+/* Shopify-Inspired Palette */
+:root {
+    --shopify-indigo: #5c6ac4;   /* Primary Brand Color */
+    --slate-dark: #212b36;      /* Heading Color */
+    --slate-light: #637381;     /* Text Color */
+    --border-grey: #dfe3e8;     /* Border Color */
+    --bg-light: #f4f6f8;        /* Page Background */
+    --white: #ffffff;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--slate-dark);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+.shop-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: var(--slate-light);
+    margin: 0;
+}
+
+/* Search Bar Styling */
+.search-wrapper {
+    position: relative;
+    margin-bottom: 50px;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 1rem;
+    border: 1px solid var(--border-grey);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: var(--shopify-indigo);
+    box-shadow: 0 0 0 3px rgba(92, 106, 196, 0.1);
+}
+
+#statusIndicator {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--slate-light);
+    min-height: 1.2rem;
+}
+
+/* Results Grid */
+#resultsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+/* Product Card */
+.product-card {
+    background: var(--white);
+    padding: 24px;
+    border-radius: 8px;
+    border: 1px solid var(--border-grey);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.product-cat {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--shopify-indigo);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+.product-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.product-price {
+    font-size: 1.1rem;
+    color: var(--slate-dark);
+}
+
+.no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px;
+    color: var(--slate-light);
+    background: var(--white);
+    border-radius: 8px;
+    border: 1px dashed var(--border-grey);
+}

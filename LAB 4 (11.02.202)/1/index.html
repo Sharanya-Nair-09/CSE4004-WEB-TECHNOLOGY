@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration | Username Checker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="card">
+        <h3>Create Account</h3>
+        <form id="registrationForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-container">
+                    <input type="text" id="username" placeholder="Enter username" autocomplete="off">
+                    <!-- Condition: Show loading indicator while request is in progress -->
+                    <div id="loader" class="hidden"></div>
+                </div>
+                <!-- Condition: Display validation feedback dynamically -->
+                <div id="feedback"></div>
+            </div>
+
+            <button type="submit" id="submitBtn">Register</button>
+        </form>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
