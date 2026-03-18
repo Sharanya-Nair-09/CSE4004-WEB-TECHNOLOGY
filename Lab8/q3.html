@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Enrollment Portal</title>
+    <style>
+        :root {
+            --maroon: #800000;
+            --white: #ffffff;
+            --light-grey: #f4f4f4;
+            --success-bg: #d4edda;
+            --error-bg: #f8d7da;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--light-grey);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--maroon);
+        }
+
+        .container {
+            background: var(--white);
+            width: 450px;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(128, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: var(--maroon);
+            border-bottom: 2px solid var(--maroon);
+            padding-bottom: 10px;
+        }
+
+        /* Database Table */
+        .db-card {
+            background: var(--white);
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .db-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .db-table th {
+            text-align: left;
+            color: #666;
+            padding-bottom: 8px;
+        }
+
+        .db-table td {
+            padding: 8px 0;
+            border-top: 1px solid #f0f0f0;
+            color: #333;
+        }
+
+        /* Form Elements */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--maroon); }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid var(--maroon);
+            border-color: transparent;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--maroon);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        /* Status Box */
+        #status-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            line-height: 1.6;
+            white-space: pre-line;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        .success { 
+            background: var(--success-bg); 
+            color: #155724; 
+            border-color: #c3e6cb; 
+            display: block !important; 
+        }
+        .error { 
+            background: var(--error-bg); 
+            color: #721c24; 
+            border-color: #f5c6cb; 
+            display: block !important; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Course Enrollment</h2>
+
+    <div class="db-card">
+        <table class="db-table">
+            <thead>
+                <tr><th>Course Details</th><th>Seats</th></tr>
+            </thead>
+            <tbody id="db-body"></tbody>
+        </table>
+    </div>
+
+    <div class="form-group">
+        <label>Student Name</label>
+        <input type="text" id="studentName" placeholder="Enter full name">
+    </div>
+
+    <div class="form-group">
+        <label>Select Course</label>
+        <select id="courseSelect">
+            <option value="1">Web Technologies — Dr. Kumar</option>
+            <option value="2">Data Structures — Dr. Smith</option>
+            <option value="3">Cyber Security — Prof. Alan</option>
+        </select>
+    </div>
+
+    <button onclick="handleEnrollment()">ENROLL NOW</button>
+
+    <div id="status-box"></div>
+</div>
+
+<script>
+    const courseData = [
+        { id: 1, name: "Web Technologies", prof: "Dr. Kumar", seats: 5 },
+        { id: 2, name: "Data Structures", prof: "Dr. Smith", seats: 5 },
+        { id: 3, name: "Cyber Security", prof: "Prof. Alan", seats: 5 }
+    ];
+
+    class Course {
+        constructor(courseName, instructor) {
+            this.courseName = courseName;
+            this.instructor = instructor;
+        }
+        displayCourse() {
+            console.log(`Course: ${this.courseName}, Instructor: ${this.instructor}`);
+        }
+    }
+
+    function updateTable() {
+        const tableBody = document.getElementById('db-body');
+        tableBody.innerHTML = courseData.map(c => `
+            <tr>
+                <td><strong>${c.name}</strong><br><small>${c.prof}</small></td>
+                <td style="color: ${c.seats === 0 ? 'red' : 'green'}; font-weight:bold;">${c.seats}</td>
+            </tr>
+        `).join('');
+    }
+
+    function handleEnrollment() {
+        const student = document.getElementById('studentName').value;
+        const selectedId = parseInt(document.getElementById('courseSelect').value);
+        const selectedData = courseData.find(c => c.id === selectedId);
+        const statusBox = document.getElementById('status-box');
+
+        if(!student) {
+            alert("Please enter your name!");
+            return;
+        }
+
+        let courseObj = new Course(selectedData.name, selectedData.prof);
+        courseObj.displayCourse(); 
+
+        let enrollCourse = new Promise((resolve, reject) => {
+            if (selectedData.seats > 0) {
+                selectedData.seats--;
+                resolve(`Student : ${student}\nCourse : ${selectedData.name}\nProfessor : ${selectedData.prof}\nEnrollment Successful`);
+            } else {
+                reject(`Course : ${selectedData.name}\nProfessor : ${selectedData.prof}\nCourse Full`);
+            }
+        });
+
+        enrollCourse
+            .then(msg => {
+                statusBox.className = "success";
+                statusBox.innerText = msg;
+                console.log("Enrollment Successful");
+                updateTable();
+            })
+            .catch(err => {
+                statusBox.className = "error";
+                statusBox.innerText = err;
+                console.log(err);
+            });
+    }
+
+    updateTable();
+</script>
+
+</body>
+</html>

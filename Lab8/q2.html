@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Profile Manager</title>
+    <style>
+        :root {
+            --dark-green: #004d40;
+            --accent-green: #00796b;
+            --white: #ffffff;
+            --light-bg: #f1f8e9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--dark-green);
+        }
+
+        .container {
+            background: var(--white);
+            width: 420px;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 77, 64, 0.1);
+            border-left: 10px solid var(--dark-green);
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--dark-green);
+            padding-bottom: 10px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            outline: 2px solid var(--dark-green);
+            border-color: transparent;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: var(--dark-green);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        button:hover { background: var(--accent-green); }
+
+        /* Output Card Styling */
+        #display-card {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            display: none;
+            line-height: 1.8;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .json-output {
+            background: #263238;
+            color: #80cbc4;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .label { font-weight: bold; color: var(--dark-green); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Student Profile</h2>
+
+    <div class="form-group">
+        <label>Student ID</label>
+        <input type="number" id="sid" placeholder="e.g. 101">
+    </div>
+
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="sname" placeholder="e.g. Priya">
+    </div>
+
+    <div class="form-group">
+        <label>Department</label>
+        <input type="text" id="sdept" placeholder="e.g. CSE">
+    </div>
+
+    <div class="form-group">
+        <label>Marks (0-100)</label>
+        <input type="number" id="smarks" placeholder="e.g. 92">
+    </div>
+
+    <button onclick="processStudent()">PROCESS PROFILE</button>
+
+    <div id="display-card"></div>
+</div>
+
+<script>
+    function processStudent() {
+        // Gathering inputs
+        const idVal = parseInt(document.getElementById('sid').value);
+        const nameVal = document.getElementById('sname').value;
+        const deptVal = document.getElementById('sdept').value;
+        const marksVal = parseInt(document.getElementById('smarks').value);
+
+        if (!idVal || !nameVal || !deptVal || isNaN(marksVal)) {
+            alert("Please fill all details correctly.");
+            return;
+        }
+
+        // 1. Defining the Object (Requirement)
+        const student = {
+            id: idVal,
+            name: nameVal,
+            department: deptVal,
+            marks: marksVal
+        };
+
+        // 2. Object Destructuring (Requirement)
+        const { id, name, department, marks } = student;
+
+        // Displaying extracted values in console (Expected Output)
+        console.log(id, name, department, marks);
+
+        // 3. Spread Operator to add 'grade' (Requirement)
+        const updatedStudent = {
+            ...student,
+            grade: marks >= 90 ? "A" : (marks >= 80 ? "B" : "C")
+        };
+
+        // Display updated object in console (Expected Output)
+        console.log(updatedStudent);
+
+        // Update UI
+        const card = document.getElementById('display-card');
+        card.style.display = "block";
+        card.innerHTML = `
+            <div class="json-output">${JSON.stringify(updatedStudent, null, 2)}</div>
+        `;
+    }
+</script>
+
+</body>
+</html>

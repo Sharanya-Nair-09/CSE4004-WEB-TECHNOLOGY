@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Grade Calculator</title>
+    <style>
+        :root {
+            --royal-blue: #0a192f;
+            --accent-blue: #112240;
+            --white: #ffffff;
+            --light-grey: #f0f2f5;
+            --error-red: #ff4d4d;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background-color: var(--light-grey);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--royal-blue);
+        }
+
+        .container {
+            background: var(--white);
+            width: 400px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(10, 25, 47, 0.15);
+            border-top: 8px solid var(--royal-blue);
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 800;
+            color: var(--royal-blue);
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #4b5563; }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1.5px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--royal-blue);
+            box-shadow: 0 0 0 3px rgba(10, 25, 47, 0.1);
+        }
+
+        /* Prevent scroll wheel from changing numbers */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            background: var(--royal-blue);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        button:hover { background: var(--accent-blue); }
+
+        #result-card {
+            margin-top: 30px;
+            padding: 25px;
+            background: var(--royal-blue);
+            color: var(--white);
+            border-radius: 10px;
+            display: none;
+            line-height: 1.8;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .res-label { font-size: 0.8rem; color: #94a3b8; letter-spacing: 1px; }
+        .res-value { font-size: 1.1rem; font-weight: 700; color: var(--white); margin-bottom: 10px; border-bottom: 1px solid #1d2d44; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Grade Portal</h2>
+
+    <div class="form-group">
+        <label>Student Name</label>
+        <input type="text" id="studentName" placeholder="Enter name">
+    </div>
+
+    <!-- Added min/max constraints to HTML -->
+    <div class="form-group">
+        <label>Mark 1 (Max 100)</label>
+        <input type="number" id="m1" min="0" max="100" placeholder="0-100">
+    </div>
+
+    <div class="form-group">
+        <label>Mark 2 (Max 100)</label>
+        <input type="number" id="m2" min="0" max="100" placeholder="0-100">
+    </div>
+
+    <div class="form-group">
+        <label>Mark 3 (Max 100)</label>
+        <input type="number" id="m3" min="0" max="100" placeholder="0-100">
+    </div>
+
+    <button onclick="generateReport()">CALCULATE RESULT</button>
+
+    <div id="result-card"></div>
+</div>
+
+<script>
+    // Requirement: ES6 Arrow Function
+    const calculateAverage = (m1, m2, m3) => (m1 + m2 + m3) / 3;
+
+    function generateReport() {
+        // Requirement: ES6 Variable Declaration (let/const)
+        const name = document.getElementById('studentName').value;
+        const mark1 = parseFloat(document.getElementById('m1').value);
+        const mark2 = parseFloat(document.getElementById('m2').value);
+        const mark3 = parseFloat(document.getElementById('m3').value);
+        const resultCard = document.getElementById('result-card');
+
+        // JS Constraint Check
+        if (!name) {
+            alert("Please enter a student name.");
+            return;
+        }
+
+        const marks = [mark1, mark2, mark3];
+        
+        // Checks if any mark is empty, less than 0, or greater than 100
+        const isInvalid = marks.some(m => isNaN(m) || m < 0 || m > 100);
+
+        if (isInvalid) {
+            alert("Invalid Marks! Please enter values between 0 and 100.");
+            return;
+        }
+
+        let total = mark1 + mark2 + mark3;
+        let average = calculateAverage(mark1, mark2, mark3);
+
+        // Requirement: Template Literals
+        resultCard.style.display = "block";
+        resultCard.innerHTML = `
+            <div class="res-label">STUDENT NAME</div>
+            <div class="res-value">${name}</div>
+            <div class="res-label">TOTAL MARKS</div>
+            <div class="res-value">${total} / 300</div>
+            <div class="res-label">AVERAGE MARKS</div>
+            <div class="res-value">${average.toFixed(2)}%</div>
+        `;
+
+        // Console Output (Requirement)
+        console.log(`Student Name: ${name}`);
+        console.log(`Average Marks: ${average.toFixed(2)}`);
+    }
+</script>
+
+</body>
+</html>
