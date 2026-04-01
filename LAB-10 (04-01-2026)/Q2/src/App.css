@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Poppins", sans-serif;
+  background: #0b1f3a; /* deep navy */
+  color: #f8f5f0; /* creme white */
+}
+
+/* Main container */
+.app-container {
+  max-width: 520px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #102a4c; /* slightly lighter navy */
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+/* Title */
+.title {
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #f8f5f0;
+  letter-spacing: 1px;
+}
+
+/* Input section */
+.input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  background: #f8f5f0;
+  color: #0b1f3a;
+  font-size: 14px;
+}
+
+/* Add button */
+button {
+  background: #f8f5f0;
+  color: #0b1f3a;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background: #e6e0d8;
+  transform: translateY(-1px);
+}
+
+/* List container */
+.list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Each item */
+.item-card {
+  background: #f8f5f0;
+  color: #0b1f3a;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+}
+
+/* Delete button */
+.item-card button {
+  background: transparent;
+  color: #0b1f3a;
+  font-size: 16px;
+}
+
+.item-card button:hover {
+  color: #b91c1c;
+}
+
+/* Empty message */
+.empty {
+  color: #cbd5e1;
+  font-size: 14px;
+  font-style: italic;
+}
