@@ -1,0 +1,100 @@
+.background-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* A nice gradient helps show off the glass blur effect */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+  backdrop-filter: blur(15px); /* This creates the glass effect */
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 40px; /* Matching your image's rounded look */
+  padding: 50px;
+  width: 650px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  color: #fff;
+}
+
+.title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 40px;
+  letter-spacing: 2px;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info {
+  flex: 1;
+}
+
+.row {
+  display: flex;
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+}
+
+.label {
+  width: 130px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.colon {
+  width: 30px;
+}
+
+.value {
+  font-weight: 400;
+}
+
+.photo-placeholder {
+  width: 150px;
+  height: 160px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.photo-placeholder svg {
+  width: 80px;
+  height: 80px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dark-glass-background {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Matching your image's purple-to-blue gradient */
+  background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%);
+  overflow: hidden;
+}
+
+.purple-glass-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px;
+  padding: 40px 60px;
+  width: 600px;
+  color: white;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+}
+
