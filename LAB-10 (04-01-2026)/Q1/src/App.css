@@ -1,0 +1,99 @@
+/* Update your App.css with this code */
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Swapped to Deep Black Background */
+  background-color: #000000; 
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+}
+
+.form-card {
+  /* Swapped to White Creme Card */
+  background-color: #fdfdf5; 
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 400px;
+  /* Text color changed to Dark for readability on light card */
+  color: #1a1a1a; 
+}
+
+h2 {
+  text-align: center;
+  color: #2e7d32; /* Deep Professional Green */
+  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #444;
+}
+
+input {
+  width: 100%;
+  padding: 0.85rem;
+  /* Light gray border for the white card */
+  border: 1.5px solid #e0e0e0; 
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4CAF50; /* Green focus highlight */
+}
+
+.error {
+  color: #d32f2f;
+  font-size: 0.75rem;
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+button {
+  width: 100%;
+  padding: 1rem;
+  background-color: #4CAF50; /* Primary Green */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: transform 0.1s active, background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #388e3c;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.success-msg {
+  color: #2e7d32;
+  text-align: center;
+  margin-top: 1.2rem;
+  font-weight: 600;
+  background: #e8f5e9;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
